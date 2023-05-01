@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/physics.dart';
 import 'package:flutter/services.dart';
 
 const double sheetOffset = 10;
@@ -48,6 +47,8 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
 
   /// A transition for initial page push animation.
   final CupertinoModalSheetRouteTransition firstTransition;
+
+  Curve _curve = Curves.easeOutCubic;
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
@@ -142,7 +143,7 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
     }
     if (secondaryAnimation.isDismissed) {
       final tween = Tween(begin: const Offset(0.0, 1.0), end: Offset.zero);
-      final curveTween = CurveTween(curve: Curves.easeOutCubic);
+      final curveTween = CurveTween(curve: _curve);
       return SlideTransition(
         position: animation.drive(curveTween).drive(tween),
         child: child,
@@ -194,6 +195,7 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
         navigator?.didStartUserGesture();
       },
       onVerticalDragUpdate: ((details) {
+        _curve = Curves.linear;
         controller?.value -= details.delta.dy / size.height;
       }),
       child: child,
