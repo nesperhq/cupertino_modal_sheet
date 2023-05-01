@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../cupertino_modal_sheet.dart';
@@ -10,6 +11,7 @@ Future<T?> showCupertinoModalSheet<T>({
   RouteSettings? routeSettings,
   bool fullscreenDialog = true,
 }) {
+  HapticFeedback.mediumImpact();
   return Navigator.of(context, rootNavigator: useRootNavigator).push(
     CupertinoModalSheetRoute<T>(
       builder: builder,
