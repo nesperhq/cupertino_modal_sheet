@@ -11,7 +11,7 @@ Future<T?> showCupertinoModalSheet<T>({
   RouteSettings? routeSettings,
   bool fullscreenDialog = true,
 }) {
-  HapticFeedback.mediumImpact();
+  HapticFeedback.lightImpact();
   return Navigator.of(context, rootNavigator: useRootNavigator).push(
     CupertinoModalSheetRoute<T>(
       builder: builder,

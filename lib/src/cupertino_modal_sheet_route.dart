@@ -213,11 +213,13 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
   Widget _stackTransition(
       double offset, double scale, Animation<double> animation, Widget child) {
     return AnimatedBuilder(
-      builder: (context, child) => Transform(
-        transform: Matrix4.translationValues(0, offset, 0)..scale(scale),
-        alignment: Alignment.topCenter,
-        child: child,
-      ),
+      builder: (context, child) {
+        return Transform(
+          transform: Matrix4.translationValues(0, offset, 0)..scale(scale),
+          alignment: Alignment.topCenter,
+          child: child,
+        );
+      },
       animation: animation,
       child: child,
     );
