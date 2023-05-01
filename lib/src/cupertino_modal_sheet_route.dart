@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 const double sheetOffset = 10;
 const double displayCornerRadius = 38.5;
-const double sheetCornerRadius = 10;
+const double sheetCornerRadius = 20;
 const double scaleFactor = 1 / 12;
 const double breakpointWidth = 800;
 const Size maxSize = Size(700, 1000);
