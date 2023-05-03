@@ -34,6 +34,7 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
     super.barrierLabel,
     super.maintainState = true,
     super.fullscreenDialog = true,
+    this.localIsFirst = false,
     this.firstTransition = CupertinoModalSheetRouteTransition.none,
   }) : super(
           pageBuilder: (_, __, ___) => const SizedBox.shrink(),
@@ -48,6 +49,7 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
   /// A transition for initial page push animation.
   final CupertinoModalSheetRouteTransition firstTransition;
 
+  final bool localIsFirst;
   Curve _curve = Curves.easeOutCubic;
 
   @override
@@ -58,7 +60,7 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
     var borderRadius =
         const BorderRadius.vertical(top: Radius.circular(sheetCornerRadius));
     if (size.width > breakpointWidth) {
-      if (isFirst) {
+      if (isFirst || localIsFirst) {
         return builder(context);
       }
       constrainsts = BoxConstraints(
@@ -70,7 +72,7 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
         minWidth: size.width,
       );
     }
-    if (isFirst) {
+    if (isFirst || localIsFirst) {
       return builder(context);
     } else {
       final paddingTop = _paddingTop(context);
@@ -107,13 +109,13 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
     Widget child,
   ) {
     if (MediaQuery.of(context).size.width > breakpointWidth) {
-      if (isFirst) {
+      if (isFirst || localIsFirst) {
         return child;
       }
     }
     final secValue = secondaryAnimation.value;
     final paddingTop = _paddingTop(context);
-    if (isFirst) {
+    if (isFirst || localIsFirst) {
       final offset = secValue * paddingTop;
       final scale = 1 - secValue * scaleFactor;
       final r = paddingTop > 30 ? displayCornerRadius : 0.0;
@@ -124,6 +126,7 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
       );
       var transitionChild =
           _stackTransition(offset, scale, secondaryAnimation, clipChild);
+
       if (firstTransition == CupertinoModalSheetRouteTransition.fade) {
         transitionChild = FadeTransition(
           opacity: animation,
@@ -136,11 +139,13 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
           child: transitionChild,
         );
       }
+
       return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: transitionChild,
       );
     }
+
     if (secondaryAnimation.isDismissed) {
       final tween = Tween(begin: const Offset(0.0, 1.0), end: Offset.zero);
       final curveTween = CurveTween(curve: _curve);
