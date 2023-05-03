@@ -34,7 +34,6 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
     super.barrierLabel,
     super.maintainState = true,
     super.fullscreenDialog = true,
-    this.localIsFirst = false,
     this.firstTransition = CupertinoModalSheetRouteTransition.none,
   }) : super(
           pageBuilder: (_, __, ___) => const SizedBox.shrink(),
@@ -49,7 +48,6 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
   /// A transition for initial page push animation.
   final CupertinoModalSheetRouteTransition firstTransition;
 
-  final bool localIsFirst;
   Curve _curve = Curves.easeOutCubic;
 
   @override
@@ -60,7 +58,7 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
     var borderRadius =
         const BorderRadius.vertical(top: Radius.circular(sheetCornerRadius));
     if (size.width > breakpointWidth) {
-      if (isFirst || localIsFirst) {
+      if (isFirst) {
         return builder(context);
       }
       constrainsts = BoxConstraints(
@@ -72,7 +70,7 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
         minWidth: size.width,
       );
     }
-    if (isFirst || localIsFirst) {
+    if (isFirst) {
       return builder(context);
     } else {
       final paddingTop = _paddingTop(context);
@@ -109,56 +107,32 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
     Widget child,
   ) {
     if (MediaQuery.of(context).size.width > breakpointWidth) {
-      if (isFirst || localIsFirst) {
+      if (isFirst) {
         return child;
       }
     }
     final secValue = secondaryAnimation.value;
     final paddingTop = _paddingTop(context);
-    if (isFirst || localIsFirst) {
-      final offset = secValue * paddingTop;
-      final scale = 1 - secValue * scaleFactor;
+    if (isFirst) {
       final r = paddingTop > 30 ? displayCornerRadius : 0.0;
       final radius = r - secValue * (r - sheetCornerRadius);
       final clipChild = ClipRRect(
         borderRadius: BorderRadius.circular(radius),
         child: child,
       );
-      var transitionChild =
-          _stackTransition(offset, scale, secondaryAnimation, clipChild);
-
-      if (firstTransition == CupertinoModalSheetRouteTransition.fade) {
-        transitionChild = FadeTransition(
-          opacity: animation,
-          child: transitionChild,
-        );
-      }
-      if (firstTransition == CupertinoModalSheetRouteTransition.scale) {
-        transitionChild = ScaleTransition(
-          scale: animation,
-          child: transitionChild,
-        );
-      }
 
       return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
-        child: transitionChild,
+        child: clipChild,
       );
     }
 
-    if (secondaryAnimation.isDismissed) {
-      final tween = Tween(begin: const Offset(0.0, 1.0), end: Offset.zero);
-      final curveTween = CurveTween(curve: _curve);
-      return SlideTransition(
-        position: animation.drive(curveTween).drive(tween),
-        child: child,
-      );
-    } else {
-      final dist = (paddingTop + sheetOffset) * (1 - scaleFactor);
-      final double offset = secValue * (paddingTop - dist);
-      final scale = 1 - secValue * scaleFactor;
-      return _stackTransition(offset, scale, secondaryAnimation, child);
-    }
+    final tween = Tween(begin: const Offset(0.0, 1.0), end: Offset.zero);
+    final curveTween = CurveTween(curve: _curve);
+    return SlideTransition(
+      position: animation.drive(curveTween).drive(tween),
+      child: child,
+    );
   }
 
   Widget _gestureDetector({required Widget child, required Size size}) {
@@ -213,20 +187,5 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
       paddingTop += 10;
     }
     return paddingTop;
-  }
-
-  Widget _stackTransition(
-      double offset, double scale, Animation<double> animation, Widget child) {
-    return AnimatedBuilder(
-      builder: (context, child) {
-        return Transform(
-          transform: Matrix4.translationValues(0, offset, 0)..scale(scale),
-          alignment: Alignment.topCenter,
-          child: child,
-        );
-      },
-      animation: animation,
-      child: child,
-    );
   }
 }
