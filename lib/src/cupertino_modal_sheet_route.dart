@@ -34,11 +34,11 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
     super.barrierLabel,
     super.maintainState = true,
     super.fullscreenDialog = true,
+    super.barrierDismissible = true,
     this.firstTransition = CupertinoModalSheetRouteTransition.none,
   }) : super(
           pageBuilder: (_, __, ___) => const SizedBox.shrink(),
           opaque: false,
-          barrierDismissible: true,
           barrierColor: CupertinoColors.black.withOpacity(0.75),
         );
 
