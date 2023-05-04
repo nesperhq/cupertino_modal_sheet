@@ -39,7 +39,7 @@ class CupertinoModalSheetRoute<T> extends PageRouteBuilder<T> {
           pageBuilder: (_, __, ___) => const SizedBox.shrink(),
           opaque: false,
           barrierDismissible: true,
-          barrierColor: CupertinoColors.systemGrey.withOpacity(0.3),
+          barrierColor: CupertinoColors.black.withOpacity(0.75),
         );
 
   /// A builder that builds the widget tree for the [CupertinoModalSheetRoute].
